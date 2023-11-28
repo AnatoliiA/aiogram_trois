@@ -4,7 +4,10 @@
 Роутер похоже создается для каждого хендлера
 Соотвестно покрываем его декоратором соотвествующего роутера.
 """
-from aiogram import types, Router, F
+import asyncio
+from typing import Callable, Dict, Any, Awaitable
+from aiogram.types import Message, PhotoSize, Update
+from aiogram import F, types, Router
 from aiogram.filters import StateFilter, state
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.markdown import hcode
@@ -12,6 +15,17 @@ from aiogram.enums import ParseMode
 from states import Test
 
 echo_router = Router()
+
+@echo_router.message()
+async def update_handler(update: Update):
+    print("[Update Inner] Before handler")
+    print(update)
+    # Логика обработки Update
+    await asyncio.sleep(1)  # Пример задержки
+    return "Update processed successfully"
+
+
+
 
 
 @echo_router.message(F.text, StateFilter(None))

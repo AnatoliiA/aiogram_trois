@@ -15,6 +15,12 @@ flags = {"throttling_key": "default"}
 router = Router()
 
 
+
+
+
+
+
+
 @router.message(Command("start"), flags=flags)
 async def cmd_start(message: Message, state: FSMContext):
     start_text = """\

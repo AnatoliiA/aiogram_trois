@@ -7,8 +7,10 @@ import asyncio
 import sys
 from aiogram import Bot, Dispatcher
 
-from handler import get_start
-from middlewares import CounterMiddleware
+from handler import echo_router, get_start, update_handler, router_game
+from handler.middleware import router1, router2
+from handler.photo import router_photo
+from middlewares import ChatActionMiddleware, CounterMiddleware, SomeMiddleware
 from utils import logging
 
 
@@ -26,16 +28,23 @@ async def main():
     from handler import routerstart, echo_router
 
     logging.info("bot start")
-
+    # dp.message.middleware.register(ChatActionMiddleware())
     # dp.message.middleware.register(CounterMiddleware())
-    dp.message.register(get_start)
-    dp.include_router(router=routerstart)
-    # dp.message.middleware(CounterMiddleware())
-    # dp.include_router(router=router)
+    # dp.update.middleware.register(SomeMiddleware())
+    # await get_start(bot)
+
+
+    dp.include_router(router=router_game)
+    # dp.include_router(router=router_photo)
+    # dp.include_router(router=routerstart)
+    # # dp.message.middleware(CounterMiddleware())
+    # dp.include_router(router=router1)
+    # dp.include_router(router=router2)
     # dp.include_router(router=echo_router)
 
     # Запускаем бота и пропускаем все накопленные входящие
     # Да, этот метод можно вызвать даже если у вас поллинг
+
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
 

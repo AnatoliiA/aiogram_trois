@@ -4,14 +4,16 @@
     Для того чтобы бот видел проект добавлять бота в проект необходимо админом.
     Иначе бот не видит.
     pdoc.exe
+    2. Описываем ContentType
+    3. Встраивимость роутеров
 """
 import logging
-
+from aiogram import F
 from aiogram.filters import CommandStart
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.markdown import hbold
 
-from aiogram import Router
+from aiogram import Router, types
 from aiogram.enums.dice_emoji import DiceEmoji
 from aiogram.filters import Command
 from aiogram.types import Message
@@ -20,13 +22,58 @@ from filters import HasUsernamesFilter
 from filters.chat_type import ChatTypeFilter
 
 from aiogram.filters import MagicData
-from aiogram import F
+
+
 from typing import Callable, Dict, Any, Awaitable, List
 from middlewares.trottling import CounterMiddleware, ThrottlingMiddleware
 
 routerstart = Router()
+routerstart.message.filter(
+    ChatTypeFilter(chat_type=["group", "supergroup"])
+)
+
+""" Создается второй роутер """
 # routerstart.message.filter(ChatTypeFilter(chat_type=["group", "supergroup"]))
 routerstart.message.middleware.register(CounterMiddleware())
+second_router = Router()
+""" Создается второй роутер и он вкладывает в первый """
+routerstart.include_router(second_router)
+""" В первый роутер вкладывается второй """
+
+async def customfunc(message: Message):
+    '''magic filter отдельная библиотека <br>
+        pip install magic-filter<br>
+        <strong>подвязана к aiogram </strong> может импортироваться отдельно<br>
+        так хорошо имеет алиaс F from aiogram import F<br>
+        method content_type.in_ :param принимает строку название типа  'text'  	&or;
+        или тип types.ContentType.STICKER}<br>
+        <a href="https://botfather.dev/dashboard/lesson/rabota-s-content-types">лекция кости поработаем с ContentTypes.</a>
+    '''
+    await message.reply("sticker")
+
+routerstart.message.register(customfunc, F.content_type.in_({'text', types.ContentType.STICKER}))
+
+
+@routerstart.message(F.text == "d")
+async def cmd_dice_in_group(message: Message, counter: str):
+    """
+    :param message:  принимает параметры
+    Откуда берется counter это берется из сообтвествующего миддлваря.
+    где в массив дата загружается соответствующая функция handler(event, data)
+    которая соответствует до хендлера данным которые мы туда положили
+        self.counter += 1
+        data["counter"] = self.counter
+        logging.info(data["counter"])
+        return await handler(event, data)
+    :type message:
+    :param counter:
+    :type counter:
+    :return:
+    :rtype:
+    """
+    logging.info(counter)
+    await message.reply(text="first level")
+    await message.answer_dice(emoji=DiceEmoji.DICE)
 
 
 # @dp.message(CommandStart())
@@ -61,9 +108,9 @@ async def cmd_dice_chanel_in_group(message: Message, counter: str):
 
 
 # Command("dice")
-@routerstart.message()
+@second_router.message()
 async def cmd_dice_in_group(message: Message, counter: str):
-    '''
+    """
     :param message:  принимает параметры
     Откуда берется counter это берется из сообтвествующего миддлваря.
     где в массив дата загружается соответствующая функция handler(event, data)
@@ -77,8 +124,9 @@ async def cmd_dice_in_group(message: Message, counter: str):
     :type counter:
     :return:
     :rtype:
-    '''
-    print(counter)
+    """
+    await message.reply(text="second level level")
+    logging.info(counter)
     await message.answer_dice(emoji=DiceEmoji.DICE)
 
 
