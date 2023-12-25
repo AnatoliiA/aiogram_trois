@@ -4,4 +4,4 @@ from .trottling import CounterMiddleware
 from .some_middleware import SomeMiddleware
 from .delay_middleware import SlowpokeMiddleware
 from .aiferbefore import WeekendMessageMiddleware, WeekendCallbackMiddleware
-from .longoperation import ChatActionMiddleware
+from .longoperation import ChatActionMiddlewareCustom

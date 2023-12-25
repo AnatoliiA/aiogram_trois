@@ -7,7 +7,7 @@ from typing import Any, Callable, Dict, Awaitable
 from aiogram.types import Message
 
 
-class ChatActionMiddleware(BaseMiddleware):
+class ChatActionMiddlewareCustom(BaseMiddleware):
     async def __call__(
             self,
             handler: Callable[[Message, Dict[str, Any]], Awaitable[Any]],

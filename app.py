@@ -10,7 +10,7 @@ from aiogram import Bot, Dispatcher
 from handler import echo_router, get_start, update_handler, router_game
 from handler.middleware import router1, router2
 from handler.photo import router_photo
-from middlewares import ChatActionMiddleware, CounterMiddleware, SomeMiddleware
+from middlewares import ChatActionMiddlewareCustom, CounterMiddleware, SomeMiddleware
 from utils import logging
 
 
@@ -28,7 +28,7 @@ async def main():
     from handler import routerstart, echo_router
 
     logging.info("bot start")
-    # dp.message.middleware.register(ChatActionMiddleware())
+    # dp.message.middleware.register(ChatActionMiddlewareCustom())
     # dp.message.middleware.register(CounterMiddleware())
     # dp.update.middleware.register(SomeMiddleware())
     # await get_start(bot)
